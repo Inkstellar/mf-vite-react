@@ -1,0 +1,144 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Introduction to Module Federation",
+      "content": "Module Federation allows you to share code between different applications at runtime.",
+      "author": "Remote App",
+      "createdAt": "2025-01-10T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Building Micro Frontends",
+      "content": "Micro frontends architecture enables teams to work independently on different parts of the application.",
+      "author": "Host App",
+      "createdAt": "2025-01-09T15:30:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com",
+      "password": "SecurePass123!",
+      "role": "developer",
+      "createdAt": "2025-01-15T08:30:00Z",
+      "isActive": true,
+      "lastLogin": "2025-01-20T14:22:00Z"
+    },
+    {
+      "id": 2,
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane@example.com",
+      "password": "DesignPass456!",
+      "role": "designer",
+      "createdAt": "2025-01-10T10:15:00Z",
+      "isActive": true,
+      "lastLogin": "2025-01-19T16:45:00Z"
+    },
+    {
+      "id": 3,
+      "firstName": "Mike",
+      "lastName": "Johnson",
+      "email": "mike@example.com",
+      "password": "ManagerPass789!",
+      "role": "manager",
+      "createdAt": "2025-01-05T09:00:00Z",
+      "isActive": false,
+      "lastLogin": "2025-01-18T11:30:00Z"
+    },
+    {
+      "id": 4,
+      "firstName": "Sarah",
+      "lastName": "Williams",
+      "email": "sarah@example.com",
+      "password": "DevPass101!",
+      "role": "developer",
+      "createdAt": "2025-01-12T14:20:00Z",
+      "isActive": true,
+      "lastLogin": "2025-01-20T09:15:00Z"
+    },
+    {
+      "id": 5,
+      "firstName": "David",
+      "lastName": "Brown",
+      "email": "david@example.com",
+      "password": "AnalystPass202!",
+      "role": "analyst",
+      "createdAt": "2025-01-08T11:45:00Z",
+      "isActive": true,
+      "lastLogin": "2025-01-20T13:20:00Z"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "React Module",
+      "description": "A reusable React component module",
+      "price": 99,
+      "category": "frontend"
+    },
+    {
+      "id": 2,
+      "name": "Navigation Component",
+      "description": "Dynamic navigation component with routing",
+      "price": 49,
+      "category": "frontend"
+    }
+  ],
+  "services": [
+    {
+      "id": 1,
+      "name": "Module Development",
+      "description": "Custom module development for your applications",
+      "price": 150,
+      "duration": "2 weeks"
+    },
+    {
+      "id": 2,
+      "name": "Code Review",
+      "description": "Comprehensive code review and optimization",
+      "price": 75,
+      "duration": "1 week"
+    }
+  ],
+  "allNav": [
+    {
+      "id": 1,
+      "path": "/services",
+      "label": "Services",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z\"/></svg>",
+      "section": "Remote Services"
+    },
+    {
+      "id": 2,
+      "path": "/portfolio",
+      "label": "Portfolio",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z\"/></svg>",
+      "section": "Remote Services"
+    },
+    {
+      "id": 3,
+      "path": "/about",
+      "label": "About",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 10.12,16.5 12,16.5C13.88,16.5 16.5,17.38 16.93,18.28C15.57,19.36 13.86,20 12,20C10.14,20 8.43,19.36 7.07,18.28M18.36,16.83C16.93,15.09 13.46,14.5 12,14.5C10.54,14.5 7.07,15.09 5.64,16.83C4.62,15.5 4,13.82 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,13.82 19.38,15.5 18.36,16.83M12,6C10.06,6 8.5,7.56 8.5,9.5C8.5,11.44 10.06,13 12,13C13.94,13 15.5,11.44 15.5,9.5C15.5,7.56 13.94,6 12,6M12,11A1.5,1.5 0 0,1 10.5,9.5A1.5,1.5 0 0,1 12,8A1.5,1.5 0 0,1 13.5,9.5A1.5,1.5 0 0,1 12,11Z\"/></svg>",
+      "section": "Main Navigation"
+    },
+    {
+      "id": 4,
+      "path": "/admin",
+      "label": "Admin",
+      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z\"/></svg>",
+      "section": "Main Navigation"
+    },
+    {
+      "path": "/users",
+      "label": "Users",
+      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M16,4C18.2,4 20,5.8 20,8C20,10.2 18.2,12 16,12C13.8,12 12,10.2 12,8C12,5.8 13.8,4 16,4M16,13C12.7,13 4,14.3 4,17V20H28V17C28,14.3 19.3,13 16,13M8,6C10.2,6 12,7.8 12,10C12,12.2 10.2,14 8,14C5.8,14 4,12.2 4,10C4,7.8 5.8,6 8,6M8,15C11.3,15 20,16.3 20,19V22H-4V19C-4,16.3 4.7,15 8,15Z\"/></svg>",
+      "section": "User Management",
+      "id": 5
+    }
+  ]
+}
