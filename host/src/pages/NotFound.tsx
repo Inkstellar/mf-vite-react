@@ -11,7 +11,7 @@ const NotFound: React.FC = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: '100vh',
+      minHeight: '80vh',
     //   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }}>
       <Paper
@@ -26,6 +26,27 @@ const NotFound: React.FC = () => {
           width: '100%'
         }}
       >
+         {/* Fun Animation/Icon */}
+         <Box
+          sx={{
+            fontSize: '4rem',
+            mb: 3,
+            animation: 'bounce 2s infinite',
+            '@keyframes bounce': {
+              '0%, 20%, 50%, 80%, 100%': {
+                transform: 'translateY(0)',
+              },
+              '40%': {
+                transform: 'translateY(-10px)',
+              },
+              '60%': {
+                transform: 'translateY(-5px)',
+              },
+            },
+          }}
+        >
+          🚀
+        </Box>
         {/* 404 Number */}
         <Typography
           variant="h1"
@@ -71,28 +92,6 @@ const NotFound: React.FC = () => {
           Oops! The page you're looking for seems to have wandered off into the digital void.
           Don't worry, it happens to the best of us!
         </Typography>
-
-        {/* Fun Animation/Icon */}
-        <Box
-          sx={{
-            fontSize: '4rem',
-            mb: 3,
-            animation: 'bounce 2s infinite',
-            '@keyframes bounce': {
-              '0%, 20%, 50%, 80%, 100%': {
-                transform: 'translateY(0)',
-              },
-              '40%': {
-                transform: 'translateY(-10px)',
-              },
-              '60%': {
-                transform: 'translateY(-5px)',
-              },
-            },
-          }}
-        >
-          🚀
-        </Box>
 
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>

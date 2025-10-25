@@ -8,11 +8,15 @@ import '../../design-system.css';
 import Home from '../../pages/Home';
 import About from '../../pages/About';
 import Admin from '../../pages/Admin';
+import Claims from '../../pages/Claims';
 import NotFound from '../../pages/NotFound';
 import Login from '../../auth/Login';
 import Register from '../../auth/Register';
 import Activation from '../../auth/Activation';
 import ForgetPassword from '../../auth/ForgetPassword';
+import ErrorBoundary from '../ErrorBoundary';
+import Users from '../../pages/Users';
+import Settings from '../../pages/Settings';
 
 
 
@@ -27,10 +31,6 @@ const RemotePortfolio = lazy(() =>
   import('remote/Portfolio').then(module => ({ default: module.default }))
 );
 
-const RemoteUsers = lazy(() =>
-  // @ts-ignore
-  import('remote/Users').then(module => ({ default: module.default }))
-);
 const HostLayout: React.FC = () => {
   return (
     <div className="app-layout">
@@ -53,11 +53,12 @@ const HostLayout: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            } />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/claims" element={<Claims />} />
+            <Route path="/settings" element={
+               <ProtectedRoute requireAuth={true}>
+                <Settings />
+                </ProtectedRoute>} />
             {/* Authentication routes - only accessible when not authenticated */}
             <Route path="/login" element={
               <ProtectedRoute requireAuth={false}>
@@ -77,20 +78,20 @@ const HostLayout: React.FC = () => {
             } />
             {/* Federated routes from remote */}
             <Route path="/services" element={
-              <Suspense fallback={<div className="loading">Loading remote services...</div>}>
-                <RemoteServices />
-              </Suspense>
+              <ErrorBoundary fallbackMessage="Failed to load services.">
+                <Suspense fallback={<div className="loading">Loading remote services...</div>}>
+                  <RemoteServices />
+                </Suspense>
+              </ErrorBoundary>
             } />
             <Route path="/portfolio" element={
-              <Suspense fallback={<div className="loading">Loading remote portfolio...</div>}>
-                <RemotePortfolio />
-              </Suspense>
+              <ErrorBoundary fallbackMessage="Failed to load portfolio.">
+                <Suspense fallback={<div className="loading">Loading remote portfolio...</div>}>
+                  <RemotePortfolio />
+                </Suspense>
+              </ErrorBoundary>
             } />
-             <Route path="/users" element={
-              <Suspense fallback={<div className="loading">Loading remote users...</div>}>
-                <RemoteUsers />
-              </Suspense>
-            } />
+             <Route path="/users" element={<Users />} />
             {/* 404 route */}
             <Route path="*" element={<NotFound />} />
           </Routes>

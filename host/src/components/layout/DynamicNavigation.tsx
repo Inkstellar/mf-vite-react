@@ -72,6 +72,14 @@ const DynamicNavigation: React.FC = () => {
     console.warn('Remote navigation error:', error);
   }
 
+  // Group remote navigation items by section
+  const groupedRemoteItems = remoteNavItems.reduce((acc, item) => {
+    const section = item.section || 'Remote Navigation';
+    if (!acc[section]) acc[section] = [];
+    acc[section].push(item);
+    return acc;
+  }, {} as Record<string, NavigationItem[]>);
+
   return (
     <>
       {/* Host Navigation Section */}
@@ -91,11 +99,11 @@ const DynamicNavigation: React.FC = () => {
         ))}
       </div>
 
-      {/* Remote Navigation Section */}
-      {remoteNavItems.length > 0 && (
-        <div className="nav-section">
-          <div className="nav-section-title">Remote Navigation</div>
-          {remoteNavItems.map((item) => (
+      {/* Remote Navigation Sections */}
+      {Object.entries(groupedRemoteItems).map(([sectionName, items]) => (
+        <div key={sectionName} className="nav-section">
+          <div className="nav-section-title">{sectionName}</div>
+          {items.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -108,7 +116,7 @@ const DynamicNavigation: React.FC = () => {
             </NavLink>
           ))}
         </div>
-      )}
+      ))}
     </>
   );
 };

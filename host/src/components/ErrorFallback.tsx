@@ -3,7 +3,15 @@ import { Box, Container, Typography, Button, Paper } from '@mui/material';
 import { Home as HomeIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-const NotFound: React.FC = () => {
+interface ErrorFallbackProps {
+  message?: string;
+  title?: string;
+}
+
+const ErrorFallback: React.FC<ErrorFallbackProps> = ({
+  message = "Something went wrong while loading this component.",
+  title = "Loading Error"
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -12,7 +20,6 @@ const NotFound: React.FC = () => {
       alignItems: 'center',
       justifyContent: 'center',
       minHeight: '80vh',
-      // background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }}>
       <Paper
         elevation={24}
@@ -26,8 +33,8 @@ const NotFound: React.FC = () => {
           width: '100%'
         }}
       >
-         {/* Fun Animation/Icon */}
-         <Box
+        {/* Error Icon */}
+        <Box
           sx={{
             fontSize: '4rem',
             mb: 3,
@@ -45,15 +52,17 @@ const NotFound: React.FC = () => {
             },
           }}
         >
-          🚀
+          ⚠️
         </Box>
-        {/* 404 Number */}
+
+        {/* Error Title */}
         <Typography
-          variant="h1"
-          component="div"
+          variant="h3"
+          component="h1"
+          gutterBottom
           sx={{
-            fontSize: '8rem',
-            fontWeight: 'bold',
+            fontSize: '2.5rem',
+            fontWeight: 600,
             background: 'linear-gradient(45deg, #667eea, #764ba2, #f093fb)',
             backgroundClip: 'text',
             WebkitBackgroundClip: 'text',
@@ -62,21 +71,7 @@ const NotFound: React.FC = () => {
             textShadow: '0 4px 8px rgba(0,0,0,0.1)'
           }}
         >
-          404
-        </Typography>
-
-        {/* Error Message */}
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
-          sx={{
-            color: '#333',
-            fontWeight: 600,
-            mb: 2
-          }}
-        >
-          Page Not Found
+          {title}
         </Typography>
 
         <Typography
@@ -89,11 +84,8 @@ const NotFound: React.FC = () => {
             lineHeight: 1.6
           }}
         >
-          Oops! The page you're looking for seems to have wandered off into the digital void.
-          Don't worry, it happens to the best of us!
+          {message}
         </Typography>
-
-       
 
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -142,40 +134,9 @@ const NotFound: React.FC = () => {
             Go Back
           </Button>
         </Box>
-
-        {/* Fun Suggestions */}
-        {/* <Box sx={{ mt: 4 }}>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            You might want to try:
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap', mt: 1 }}>
-            {[
-              { path: '/', label: '🏠 Home' },
-              { path: '/about', label: 'ℹ️ About' },
-              { path: '/admin', label: '⚙️ Admin' },
-              { path: '/services', label: '🔧 Services' },
-              { path: '/portfolio', label: '💼 Portfolio' }
-            ].map((item) => (
-              <Button
-                key={item.path}
-                variant="text"
-                size="small"
-                onClick={() => navigate(item.path)}
-                sx={{
-                  color: '#667eea',
-                  '&:hover': {
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                  }
-                }}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </Box>
-        </Box> */}
       </Paper>
     </Container>
   );
 };
 
-export default NotFound;
+export default ErrorFallback;

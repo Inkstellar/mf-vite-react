@@ -25,7 +25,12 @@
       "role": "developer",
       "createdAt": "2025-01-15T08:30:00Z",
       "isActive": true,
-      "lastLogin": "2025-01-20T14:22:00Z"
+      "lastLogin": "2025-01-20T14:22:00Z",
+      "claims": [
+        "read",
+        "users.view",
+        "portfolio.view"
+      ]
     },
     {
       "id": 2,
@@ -36,7 +41,12 @@
       "role": "designer",
       "createdAt": "2025-01-10T10:15:00Z",
       "isActive": true,
-      "lastLogin": "2025-01-19T16:45:00Z"
+      "lastLogin": "2025-01-19T16:45:00Z",
+      "claims": [
+        "read",
+        "portfolio.view",
+        "services.view"
+      ]
     },
     {
       "id": 3,
@@ -58,7 +68,13 @@
       "role": "developer",
       "createdAt": "2025-01-12T14:20:00Z",
       "isActive": true,
-      "lastLogin": "2025-01-20T09:15:00Z"
+      "lastLogin": "2025-01-20T09:15:00Z",
+      "claims": [
+        "read",
+        "users.view",
+        "services.view",
+        "portfolio.view"
+      ]
     },
     {
       "id": 5,
@@ -69,7 +85,31 @@
       "role": "analyst",
       "createdAt": "2025-01-08T11:45:00Z",
       "isActive": true,
-      "lastLogin": "2025-01-20T13:20:00Z"
+      "lastLogin": "2025-01-20T13:20:00Z",
+      "claims": [
+        "read",
+        "users.view",
+        "claims.view"
+      ]
+    },
+    {
+      "firstName": "Kousi",
+      "lastName": "Moni",
+      "email": "kousi@testmail.com",
+      "password": "Kousi@123",
+      "role": "designer",
+      "isActive": false,
+      "claims": [
+        "admin",
+        "read",
+        "admin.write",
+        "admin.read",
+        "admin.access",
+        "portfolio.view"
+      ],
+      "createdAt": "2025-10-25T18:25:16.627Z",
+      "lastLogin": "Never",
+      "id": 6
     }
   ],
   "products": [
@@ -110,35 +150,319 @@
       "path": "/services",
       "label": "Services",
       "icon": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z\"/></svg>",
-      "section": "Remote Services"
+      "section": "Remote Services",
+      "claims": [
+        "read",
+        "services.view"
+      ]
     },
     {
       "id": 2,
       "path": "/portfolio",
       "label": "Portfolio",
       "icon": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z\"/></svg>",
-      "section": "Remote Services"
-    },
-    {
-      "id": 3,
-      "path": "/about",
-      "label": "About",
-      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 10.12,16.5 12,16.5C13.88,16.5 16.5,17.38 16.93,18.28C15.57,19.36 13.86,20 12,20C10.14,20 8.43,19.36 7.07,18.28M18.36,16.83C16.93,15.09 13.46,14.5 12,14.5C10.54,14.5 7.07,15.09 5.64,16.83C4.62,15.5 4,13.82 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,13.82 19.38,15.5 18.36,16.83M12,6C10.06,6 8.5,7.56 8.5,9.5C8.5,11.44 10.06,13 12,13C13.94,13 15.5,11.44 15.5,9.5C15.5,7.56 13.94,6 12,6M12,11A1.5,1.5 0 0,1 10.5,9.5A1.5,1.5 0 0,1 12,8A1.5,1.5 0 0,1 13.5,9.5A1.5,1.5 0 0,1 12,11Z\"/></svg>",
-      "section": "Main Navigation"
+      "section": "Remote Services",
+      "claims": [
+        "read",
+        "portfolio.view"
+      ]
     },
     {
       "id": 4,
       "path": "/admin",
       "label": "Admin",
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z\"/></svg>",
-      "section": "Main Navigation"
+      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14M8,6C10.2,6 12,7.8 12,10C12,12.2 10.2,14 8,14C5.8,14 4,12.2 4,10C4,7.8 5.8,6 8,6M8,15C11.3,15 20,16.3 20,19V22H-4V19C-4,16.3 4.7,15 8,15Z\"/></svg>",
+      "section": "Main Navigation",
+      "claims": [
+        "admin",
+        "admin.access",
+        "admin.read",
+        "admin.write"
+      ]
     },
     {
       "path": "/users",
       "label": "Users",
       "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M16,4C18.2,4 20,5.8 20,8C20,10.2 18.2,12 16,12C13.8,12 12,10.2 12,8C12,5.8 13.8,4 16,4M16,13C12.7,13 4,14.3 4,17V20H28V17C28,14.3 19.3,13 16,13M8,6C10.2,6 12,7.8 12,10C12,12.2 10.2,14 8,14C5.8,14 4,12.2 4,10C4,7.8 5.8,6 8,6M8,15C11.3,15 20,16.3 20,19V22H-4V19C-4,16.3 4.7,15 8,15Z\"/></svg>",
-      "section": "User Management",
+      "section": "Main Navigation",
+      "claims": [
+        "admin",
+        "users.view",
+        "users.manage"
+      ],
       "id": 5
+    },
+    {
+      "path": "/claims",
+      "label": "Claims",
+      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z\"/></svg>",
+      "section": "Main Navigation",
+      "claims": [
+        "admin",
+        "claims.view",
+        "claims.manage"
+      ],
+      "id": 6
+    }
+  ],
+  "claims": [
+    {
+      "id": 1,
+      "name": "read",
+      "description": "Basic read access to view content",
+      "usageCount": 3,
+      "category": "basic",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 2,
+      "name": "admin",
+      "description": "Administrative access to manage system",
+      "usageCount": 3,
+      "category": "admin",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 3,
+      "name": "admin.access",
+      "description": "Access to admin panel",
+      "usageCount": 2,
+      "category": "admin",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 4,
+      "name": "admin.read",
+      "description": "Read access within admin panel",
+      "usageCount": 2,
+      "category": "admin",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 5,
+      "name": "admin.write",
+      "description": "Write/modify access within admin panel",
+      "usageCount": 2,
+      "category": "admin",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 6,
+      "name": "services.view",
+      "description": "Access to view services section",
+      "usageCount": 1,
+      "category": "feature",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 7,
+      "name": "portfolio.view",
+      "description": "Access to view portfolio section",
+      "usageCount": 1,
+      "category": "feature",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 8,
+      "name": "users.view",
+      "description": "Access to view users section",
+      "usageCount": 1,
+      "category": "feature",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 9,
+      "name": "users.manage",
+      "description": "Access to manage users (create, edit, delete)",
+      "usageCount": 1,
+      "category": "feature",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 10,
+      "name": "claims.view",
+      "description": "Access to view claims section",
+      "usageCount": 1,
+      "category": "feature",
+      "createdAt": "2025-01-15T08:30:00Z"
+    },
+    {
+      "id": 11,
+      "name": "claims.manage",
+      "description": "Access to manage claims (create, edit, delete)",
+      "usageCount": 1,
+      "category": "feature",
+      "createdAt": "2025-01-15T08:30:00Z"
+    }
+  ],
+  "icons": [
+    {
+      "id": 1,
+      "name": "Home",
+      "icon": "HomeRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/></svg>",
+      "category": "Navigation"
+    },
+    {
+      "id": 2,
+      "name": "Dashboard",
+      "icon": "DashboardRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z\"/></svg>",
+      "category": "Navigation"
+    },
+    {
+      "id": 3,
+      "name": "Menu",
+      "icon": "MenuRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z\"/></svg>",
+      "category": "Navigation"
+    },
+    {
+      "id": 4,
+      "name": "Arrow Back",
+      "icon": "ArrowBackRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z\"/></svg>",
+      "category": "Navigation"
+    },
+    {
+      "id": 5,
+      "name": "Arrow Forward",
+      "icon": "ArrowForwardRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z\"/></svg>",
+      "category": "Navigation"
+    },
+    {
+      "id": 6,
+      "name": "Add",
+      "icon": "AddRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z\"/></svg>",
+      "category": "Actions"
+    },
+    {
+      "id": 7,
+      "name": "Edit",
+      "icon": "EditRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z\"/></svg>",
+      "category": "Actions"
+    },
+    {
+      "id": 8,
+      "name": "Delete",
+      "icon": "DeleteRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z\"/></svg>",
+      "category": "Actions"
+    },
+    {
+      "id": 9,
+      "name": "Save",
+      "icon": "SaveRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V6h10v3z\"/></svg>",
+      "category": "Actions"
+    },
+    {
+      "id": 10,
+      "name": "Search",
+      "icon": "SearchRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z\"/></svg>",
+      "category": "Actions"
+    },
+    {
+      "id": 11,
+      "name": "Settings",
+      "icon": "SettingsRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z\"/></svg>",
+      "category": "Actions"
+    },
+    {
+      "id": 12,
+      "name": "Email",
+      "icon": "EmailRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\"/></svg>",
+      "category": "Communication"
+    },
+    {
+      "id": 13,
+      "name": "Chat",
+      "icon": "ChatRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z\"/></svg>",
+      "category": "Communication"
+    },
+    {
+      "id": 14,
+      "name": "Link",
+      "icon": "LinkRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>",
+      "category": "Content"
+    },
+    {
+      "id": 15,
+      "name": "Description",
+      "icon": "DescriptionRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z\"/></svg>",
+      "category": "Content"
+    },
+    {
+      "id": 16,
+      "name": "Person",
+      "icon": "PersonRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z\"/></svg>",
+      "category": "Social"
+    },
+    {
+      "id": 17,
+      "name": "Group",
+      "icon": "GroupRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M16,4C18.2,4 20,5.8 20,8C20,10.2 18.2,12 16,12C13.8,12 12,10.2 12,8C12,5.8 13.8,4 16,4M16,13C12.7,13 4,14.3 4,17V20H28V17C28,14.3 19.3,13 16,13M8,6C10.2,6 12,7.8 12,10C12,12.2 10.2,14 8,14C5.8,14 4,12.2 4,10C4,7.8 5.8,6 8,6M8,15C11.3,15 20,16.3 20,19V22H-4V19C-4,16.3 4.7,15 8,15Z\"/></svg>",
+      "category": "Social"
+    },
+    {
+      "id": 18,
+      "name": "Check",
+      "icon": "CheckRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>",
+      "category": "Status"
+    },
+    {
+      "id": 19,
+      "name": "Warning",
+      "icon": "WarningRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z\"/></svg>",
+      "category": "Status"
+    },
+    {
+      "id": 20,
+      "name": "Info",
+      "icon": "InfoRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V7L15,1H5C3.89,1 3,1.89 3,3V21A2,2 0 0,0 5,23H19A2,2 0 0,0 21,21V9M19,9H14V4H19V9Z\"/></svg>",
+      "category": "Status"
+    },
+    {
+      "id": 21,
+      "name": "Lock",
+      "icon": "LockRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M18,8H17V6C17,3.24 14.76,1 12,1C9.24,1 7,3.24 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M8.9,6C8.9,4.29 10.29,2.9 12,2.9C13.71,2.9 15.1,4.29 15.1,6V8H8.9V6M16,10V20H8V10H16Z\"/></svg>",
+      "category": "Security"
+    },
+    {
+      "id": 22,
+      "name": "Visibility",
+      "icon": "VisibilityRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5M12,17A4.5,4.5 0 0,1 7.5,12.5A4.5,4.5 0 0,1 12,8A4.5,4.5 0 0,1 16.5,12.5A4.5,4.5 0 0,1 12,17M12,10A2.5,2.5 0 0,0 9.5,12.5A2.5,2.5 0 0,0 12,15A2.5,2.5 0 0,0 14.5,12.5A2.5,2.5 0 0,0 12,10Z\"/></svg>",
+      "category": "Security"
+    },
+    {
+      "id": 23,
+      "name": "Folder",
+      "icon": "FolderRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z\"/></svg>",
+      "category": "Files"
+    },
+    {
+      "id": 24,
+      "name": "Document",
+      "icon": "InsertDriveFileRounded",
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z\"/></svg>",
+      "category": "Files"
     }
   ]
 }

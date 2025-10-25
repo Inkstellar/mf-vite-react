@@ -1,0 +1,53 @@
+ {/* Edit Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {editingItem ? 'Edit Navigation Item' : 'Add New Navigation Item'}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Path"
+            value={formData.path}
+            onChange={handleInputChange('path')}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Label"
+            value={formData.label}
+            onChange={handleInputChange('label')}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            label="Icon (SVG)"
+            value={formData.icon}
+            onChange={handleInputChange('icon')}
+            margin="normal"
+            required
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Section</InputLabel>
+            <Select
+              value={formData.section}
+              onChange={(e) => setFormData(prev => ({ ...prev, section: e.target.value }))}
+              label="Section"
+            >
+              <MenuItem value="Main Navigation">Main Navigation</MenuItem>
+              <MenuItem value="Remote Services">Remote Services</MenuItem>
+              <MenuItem value="User Management">User Management</MenuItem>
+              <MenuItem value="Settings">Settings</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained">
+            {editingItem ? 'Update' : 'Add'} Item
+          </Button>
+        </DialogActions>
+      </Dialog>
