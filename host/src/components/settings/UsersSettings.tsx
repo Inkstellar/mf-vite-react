@@ -22,8 +22,12 @@ import {
   FormControlLabel,
   Switch,
   Autocomplete,
-  Stack
+  Stack,
+  Card,
+  CardMedia,
+  CardContent as MuiCardContent
 } from '@mui/material';
+import { authService } from '../../services/auth';
 import {
   DataGrid,
   GridColDef,
@@ -33,7 +37,9 @@ import {
   Person as PersonIcon,
   Email as EmailIcon,
   Edit as EditIcon,
-  Save as SaveIcon
+  Save as SaveIcon,
+  PhotoCamera as PhotoCameraIcon,
+  Delete as DeleteIcon
 } from '@mui/icons-material';
 
 interface User {
@@ -46,6 +52,7 @@ interface User {
   isActive: boolean;
   lastLogin?: string;
   claims?: string[];
+  profilePicture?: string;
 }
 
 interface ClaimItem {
@@ -68,6 +75,24 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
   const [error, setError] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
+  // Check authentication status
+  const token = authService.getToken();
+  const isAuthenticated = token && authService.isTokenValid();
+
+  // If not authenticated, don't render the component
+  if (!isAuthenticated) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography variant="h6" color="error">
+          Authentication Required
+        </Typography>
+        <Typography variant="body1" sx={{ mt: 1 }}>
+          Please log in to access user management features.
+        </Typography>
+      </Box>
+    );
+  }
+
   // Edit dialog state
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -77,8 +102,14 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
     email: '',
     role: '',
     isActive: true,
-    claims: []
+    claims: [],
+    profilePicture: ''
   });
+
+  // Profile picture state
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
 
   // Fetch users and claims from JSON server
   useEffect(() => {
@@ -101,7 +132,13 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/users');
+      const token = authService.getToken();
+      const response = await fetch('http://localhost:3001/users', {
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -176,8 +213,13 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
       email: user.email,
       role: user.role,
       isActive: user.isActive,
-      claims: user.claims || []
+      claims: user.claims || [],
+      profilePicture: user.profilePicture || ''
     });
+    // Clear any existing preview when opening dialog
+    setPreviewUrl('');
+    setSelectedFile(null);
+    setUploading(false);
     setOpenDialog(true);
   };
 
@@ -186,10 +228,12 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
     if (!editingUser) return;
 
     try {
+      const token = authService.getToken();
       const response = await fetch(`http://localhost:3001/users/${editingUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({
           ...formData,
@@ -207,13 +251,13 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
         });
         handleCloseDialog();
       } else {
-        throw new Error('Failed to update user');
+        throw new Error(`Failed to update user: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error('Error updating user:', error);
       setSnackbar({
         open: true,
-        message: 'Error updating user',
+        message: error instanceof Error ? error.message : 'Error updating user',
         severity: 'error'
       });
     }
@@ -221,6 +265,10 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
 
   // Close dialog
   const handleCloseDialog = () => {
+    // Clean up preview URL
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setOpenDialog(false);
     setEditingUser(null);
     setFormData({
@@ -229,13 +277,85 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
       email: '',
       role: '',
       isActive: true,
-      claims: []
+      claims: [],
+      profilePicture: ''
     });
+    setPreviewUrl('');
+    setSelectedFile(null);
   };
 
   // Close snackbar
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  // Handle file selection
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setSnackbar({ open: true, message: 'Please select a valid image file', severity: 'error' });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setSnackbar({ open: true, message: 'File size must be less than 5MB', severity: 'error' });
+      return;
+    }
+
+    setSelectedFile(file);
+
+    // Create preview URL
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+  };
+
+  // Handle file upload
+  const handleUpload = async () => {
+    if (!selectedFile || !editingUser) return;
+
+    setUploading(true);
+    try {
+      // For demo purposes, we'll simulate an upload and generate a data URL
+      // In a real application, you would upload to a server and get back a URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        setFormData(prev => ({ ...prev, profilePicture: dataUrl }));
+        setPreviewUrl('');
+        setSelectedFile(null);
+        setUploading(false);
+        setSnackbar({ open: true, message: 'Profile picture uploaded successfully', severity: 'success' });
+      };
+      reader.readAsDataURL(selectedFile);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setUploading(false);
+      setSnackbar({ open: true, message: 'Error uploading profile picture', severity: 'error' });
+    }
+  };
+
+  // Handle remove preview
+  const handleRemovePreview = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl('');
+    setSelectedFile(null);
+    // Reset file input
+    const input = document.getElementById('profile-picture-input') as HTMLInputElement;
+    if (input) {
+      input.value = '';
+    }
+  };
+
+  // Handle remove current picture
+  const handleRemoveCurrentPicture = () => {
+    setFormData(prev => ({ ...prev, profilePicture: '' }));
+    setSnackbar({ open: true, message: 'Profile picture removed', severity: 'success' });
   };
 
   // Get claim color
@@ -260,8 +380,15 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => (
         <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32 }}>
-            {getInitials(params.row.firstName, params.row.lastName)}
+          <Avatar
+            src={params.row.profilePicture}
+            sx={{
+              bgcolor: params.row.profilePicture ? 'transparent' : 'primary.main',
+              width: 32,
+              height: 32
+            }}
+          >
+            {!params.row.profilePicture && getInitials(params.row.firstName, params.row.lastName)}
           </Avatar>
           <Typography variant="body2" fontWeight="medium">
             {params.value}
@@ -538,6 +665,132 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
                 );
               }}
             />
+
+            {/* Profile Picture Section */}
+            <Box>
+              <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+                Profile Picture
+              </Typography>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2 }}>
+                {/* Current Profile Picture Display */}
+                <Box sx={{ textAlign: 'center' }}>
+                  <Avatar
+                    src={formData.profilePicture || editingUser?.profilePicture}
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      bgcolor: 'primary.main',
+                      fontSize: '1.5rem'
+                    }}
+                  >
+                    {(!formData.profilePicture && !editingUser?.profilePicture) &&
+                      getInitials(formData.firstName || '', formData.lastName || '')
+                    }
+                  </Avatar>
+                  <Typography variant="caption" display="block" sx={{ mt: 1, color: 'text.secondary' }}>
+                    Current
+                  </Typography>
+                </Box>
+
+                {/* Upload Section */}
+                <Box sx={{ flex: 1 }}>
+                  <Box
+                    sx={{
+                      border: '2px dashed',
+                      borderColor: 'primary.main',
+                      borderRadius: 2,
+                      p: 3,
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        borderColor: 'primary.dark',
+                        bgcolor: 'action.hover'
+                      }
+                    }}
+                    onClick={() => document.getElementById('profile-picture-input')?.click()}
+                  >
+                    <PhotoCameraIcon sx={{ fontSize: 48, color: 'primary.main', mb: 1 }} />
+                    <Typography variant="body1" gutterBottom>
+                      Click to upload or drag and drop
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      PNG, JPG, GIF up to 5MB
+                    </Typography>
+                  </Box>
+
+                  <input
+                    id="profile-picture-input"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleFileSelect}
+                  />
+
+                  {/* Preview */}
+                  {previewUrl && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" gutterBottom>
+                        Preview:
+                      </Typography>
+                      <Avatar
+                        src={previewUrl}
+                        sx={{
+                          width: 80,
+                          height: 80,
+                          mx: 'auto',
+                          border: '2px solid',
+                          borderColor: 'primary.main'
+                        }}
+                      />
+                    </Box>
+                  )}
+
+                  {/* Upload Progress */}
+                  {uploading && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="body2" color="primary" gutterBottom>
+                        Uploading...
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* Action Buttons */}
+                  <Box sx={{ mt: 2, display: 'flex', gap: 1, justifyContent: 'center' }}>
+                    {previewUrl && (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={handleUpload}
+                        disabled={uploading}
+                      >
+                        Upload
+                      </Button>
+                    )}
+                    {previewUrl && (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={handleRemovePreview}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                    {(formData.profilePicture || editingUser?.profilePicture) && (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={handleRemoveCurrentPicture}
+                      >
+                        Remove Current
+                      </Button>
+                    )}
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
 
             {editingUser && (
               <Box>

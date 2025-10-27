@@ -25,7 +25,7 @@
       "role": "developer",
       "createdAt": "2025-01-15T08:30:00Z",
       "isActive": true,
-      "lastLogin": "2025-01-20T14:22:00Z",
+      "lastLogin": "2025-10-26T06:39:29.744Z",
       "claims": [
         "read",
         "users.view",
@@ -98,7 +98,7 @@
       "email": "kousi@testmail.com",
       "password": "Kousi@123",
       "role": "designer",
-      "isActive": false,
+      "isActive": true,
       "claims": [
         "admin",
         "read",
@@ -108,7 +108,7 @@
         "portfolio.view"
       ],
       "createdAt": "2025-10-25T18:25:16.627Z",
-      "lastLogin": "Never",
+      "lastLogin": "2025-10-27T11:46:16.670Z",
       "id": 6
     }
   ],

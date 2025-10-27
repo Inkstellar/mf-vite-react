@@ -84,13 +84,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Initialize auth state from storage
   useEffect(() => {
-    const initAuth = () => {
+    const initAuth = async () => {
       const token = authService.getToken();
-      const user = authService.getUser();
 
-      if (token && user && authService.refreshSession()) {
-        dispatch({ type: 'AUTH_SUCCESS', payload: { user, token } });
-      } else {
+      if (token && authService.isTokenValid()) {
+        try {
+          // Verify token with server
+          const response = await authService.verifyToken();
+
+          if (response.valid && response.user) {
+            // Update user data from token
+            const userFromToken = authService.getUserFromToken();
+            if (userFromToken) {
+              authService.setUser(userFromToken);
+              dispatch({ type: 'AUTH_SUCCESS', payload: { user: userFromToken, token } });
+            }
+          } else {
+            // Token is invalid, logout
+            authService.logout();
+          }
+        } catch (error) {
+          // Token verification failed, logout
+          authService.logout();
+        }
+      } else if (token) {
+        // Token exists but is invalid, logout
         authService.logout();
       }
     };

@@ -1,10 +1,18 @@
 import { federation } from '@module-federation/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import { dependencies } from './package.json';
 
 export default defineConfig(() => ({
-	server: { fs: { allow: ['.', '../shared'] } },
+	server: {
+		fs: { allow: ['.', '../shared'] },
+		proxy: {
+			'/api': {
+				target: 'http://localhost:3001',
+				changeOrigin: true,
+				secure: false,
+			}
+		}
+	},
 	build: {
 		target: 'chrome89',
 	},
@@ -24,11 +32,11 @@ export default defineConfig(() => ({
 			filename: 'remoteEntry.js',
 			shared: {
 				react: {
-					requiredVersion: dependencies.react,
+					requiredVersion: '^18.3.1',
 					singleton: true,
 				},
 				'react-router-dom': {
-					requiredVersion: dependencies.react,
+					requiredVersion: '^7.9.4',
 					singleton: true,
 				},
 			},

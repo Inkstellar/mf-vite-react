@@ -8,6 +8,7 @@ export interface User {
   isActive: boolean;
   createdAt: string;
   lastLogin?: string;
+  claims?: string[];
 }
 
 export interface AuthState {
@@ -49,8 +50,8 @@ const STORAGE_KEYS = {
   REMEMBER_ME: 'remember_me',
 };
 
-// API Base URL
-const API_BASE_URL = 'http://localhost:3001';
+// API Base URL - using proxy in development
+const API_BASE_URL = '/api';
 
 // Auth Service Class
 class AuthService {
@@ -132,16 +133,12 @@ class AuthService {
 
   // Authentication methods
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
-    // For demo purposes, we'll simulate login with json-server users
-    const users = await this.apiCall('/users');
-    const user = users.find((u: User) => u.email === credentials.email);
+    const response = await this.apiCall('/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
 
-    if (!user || user.password !== credentials.password) {
-      throw new Error('Invalid email or password');
-    }
-
-    const token = `demo_token_${user.id}_${Date.now()}`;
-    return { user, token };
+    return response;
   }
 
   async register(userData: RegisterData): Promise<User> {
@@ -149,41 +146,89 @@ class AuthService {
       throw new Error('Passwords do not match');
     }
 
-    const newUser = {
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email,
-      password: userData.password,
-      role: 'user',
-      isActive: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    const createdUser = await this.apiCall('/users', {
+    const response = await this.apiCall('/register', {
       method: 'POST',
-      body: JSON.stringify(newUser),
+      body: JSON.stringify({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+      }),
     });
 
-    return createdUser;
+    return response.user;
   }
 
   async forgotPassword(data: ForgotPasswordData): Promise<void> {
-    // Simulate sending reset email
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Password reset email sent to: ${data.email}`);
+    await this.apiCall('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
   async resetPassword(data: ResetPasswordData): Promise<void> {
-    // Simulate password reset
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Password reset successful');
+    await this.apiCall('/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
   async activateAccount(token: string): Promise<User> {
-    // Simulate account activation
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Account activated with token: ${token}`);
-    return {} as User;
+    const response = await this.apiCall('/activate', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    });
+
+    return response.user;
+  }
+
+  // JWT Token validation
+  isTokenValid(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      // Basic check if token exists and is not expired
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      return payload.exp > currentTime;
+    } catch {
+      return false;
+    }
+  }
+
+  // Get user info from JWT token
+  getUserFromToken(): User | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        id: payload.userId,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+        role: payload.role,
+        isActive: payload.isActive,
+        createdAt: '',
+        lastLogin: '',
+        claims: payload.claims || []
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  // Verify token with server
+  async verifyToken(): Promise<{ valid: boolean; user?: User }> {
+    try {
+      const response = await this.apiCall('/verify-token');
+      return response;
+    } catch (error) {
+      return { valid: false };
+    }
   }
 
   logout(): void {
@@ -192,22 +237,7 @@ class AuthService {
 
   // Session management
   isTokenExpired(): boolean {
-    const token = this.getToken();
-    if (!token) return true;
-
-    try {
-      // Simple expiration check (demo purposes)
-      const parts = token.split('_');
-      if (parts.length >= 3) {
-        const timestamp = parseInt(parts[2]);
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000; // 24 hours
-        return (now - timestamp) > oneDay;
-      }
-      return true;
-    } catch {
-      return true;
-    }
+    return !this.isTokenValid();
   }
 
   refreshSession(): boolean {
@@ -216,6 +246,24 @@ class AuthService {
       return false;
     }
     return true;
+  }
+
+  // Check if user has specific claim/permission
+  hasClaim(claim: string): boolean {
+    const user = this.getUserFromToken();
+    return user?.claims?.includes(claim) || false;
+  }
+
+  // Check if user has any of the specified claims
+  hasAnyClaim(claims: string[]): boolean {
+    const user = this.getUserFromToken();
+    return claims.some(claim => user?.claims?.includes(claim));
+  }
+
+  // Check if user has all of the specified claims
+  hasAllClaims(claims: string[]): boolean {
+    const user = this.getUserFromToken();
+    return claims.every(claim => user?.claims?.includes(claim));
   }
 }
 

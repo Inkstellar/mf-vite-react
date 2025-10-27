@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Alert,
+  Container,
+  Divider,
+  CircularProgress,
+  LinearProgress
+} from '@mui/material';
 import { useAuth } from './AuthContext';
 import { RegisterData } from '../services/auth';
-import './auth-styles.css';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -138,193 +152,236 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <div className="auth-card">
-          <div className="auth-header">
-            <h1>Create Account</h1>
-            <p>Sign up for a new account</p>
-          </div>
+    <Container maxWidth="sm" sx={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      py: 4
+    }}>
+      <Card sx={{
+        width: '100%',
+        maxWidth: 450,
+        boxShadow: 3,
+        borderRadius: 2
+      }}>
+        <CardContent sx={{ p: 4 }}>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 600 }}>
+              Create Account
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Sign up for a new account
+            </Typography>
+          </Box>
 
-          <form onSubmit={handleSubmit} className="auth-form">
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {/* First Name Field */}
-            <div className="form-group">
-              <label htmlFor="firstName" className="form-label">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className={`form-input ${formErrors.firstName ? 'error' : ''}`}
-                placeholder="Enter your first name"
-                disabled={state.isLoading}
-              />
-              {formErrors.firstName && (
-                <span className="form-error">{formErrors.firstName}</span>
-              )}
-            </div>
+            <TextField
+              fullWidth
+              type="text"
+              id="firstName"
+              name="firstName"
+              label="First Name"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              error={!!formErrors.firstName}
+              helperText={formErrors.firstName}
+              placeholder="Enter your first name"
+              disabled={state.isLoading}
+              variant="outlined"
+            />
 
             {/* Last Name Field */}
-            <div className="form-group">
-              <label htmlFor="lastName" className="form-label">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className={`form-input ${formErrors.lastName ? 'error' : ''}`}
-                placeholder="Enter your last name"
-                disabled={state.isLoading}
-              />
-              {formErrors.lastName && (
-                <span className="form-error">{formErrors.lastName}</span>
-              )}
-            </div>
+            <TextField
+              fullWidth
+              type="text"
+              id="lastName"
+              name="lastName"
+              label="Last Name"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              error={!!formErrors.lastName}
+              helperText={formErrors.lastName}
+              placeholder="Enter your last name"
+              disabled={state.isLoading}
+              variant="outlined"
+            />
 
             {/* Email Field */}
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`form-input ${formErrors.email ? 'error' : ''}`}
-                placeholder="Enter your email"
-                disabled={state.isLoading}
-              />
-              {formErrors.email && (
-                <span className="form-error">{formErrors.email}</span>
-              )}
-            </div>
+            <TextField
+              fullWidth
+              type="email"
+              id="email"
+              name="email"
+              label="Email Address"
+              value={formData.email}
+              onChange={handleInputChange}
+              error={!!formErrors.email}
+              helperText={formErrors.email}
+              placeholder="Enter your email"
+              disabled={state.isLoading}
+              variant="outlined"
+            />
 
             {/* Password Field */}
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <input
+            <Box>
+              <TextField
+                fullWidth
                 type="password"
                 id="password"
                 name="password"
+                label="Password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className={`form-input ${formErrors.password ? 'error' : ''}`}
+                error={!!formErrors.password}
+                helperText={formErrors.password}
                 placeholder="Create a password"
                 disabled={state.isLoading}
+                variant="outlined"
               />
               {formData.password && (
-                <div className="password-strength">
-                  <div className="strength-bar">
-                    <div
-                      className="strength-fill"
-                      style={{
-                        width: `${(passwordStrength / 5) * 100}%`,
+                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={(passwordStrength / 5) * 100}
+                    sx={{
+                      flex: 1,
+                      height: 4,
+                      borderRadius: 2,
+                      '& .MuiLinearProgress-bar': {
                         backgroundColor: getPasswordStrengthColor()
-                      }}
-                    ></div>
-                  </div>
-                  <span className="strength-text" style={{ color: getPasswordStrengthColor() }}>
+                      }
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      minWidth: 50,
+                      textAlign: 'right',
+                      color: getPasswordStrengthColor(),
+                      fontWeight: 600
+                    }}
+                  >
                     {getPasswordStrengthText()}
-                  </span>
-                </div>
+                  </Typography>
+                </Box>
               )}
-              {formErrors.password && (
-                <span className="form-error">{formErrors.password}</span>
-              )}
-            </div>
+            </Box>
 
             {/* Confirm Password Field */}
-            <div className="form-group">
-              <label htmlFor="confirmPassword" className="form-label">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className={`form-input ${formErrors.confirmPassword ? 'error' : ''}`}
-                placeholder="Confirm your password"
-                disabled={state.isLoading}
-              />
-              {formErrors.confirmPassword && (
-                <span className="form-error">{formErrors.confirmPassword}</span>
-              )}
-            </div>
+            <TextField
+              fullWidth
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              label="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              error={!!formErrors.confirmPassword}
+              helperText={formErrors.confirmPassword}
+              placeholder="Confirm your password"
+              disabled={state.isLoading}
+              variant="outlined"
+            />
 
             {/* Terms and Conditions */}
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
+            <FormControlLabel
+              control={
+                <Checkbox
                   required
                   disabled={state.isLoading}
+                  size="small"
                 />
-                <span className="checkbox-custom"></span>
-                I agree to the{' '}
-                <Link to="/terms" className="auth-link">
-                  Terms and Conditions
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="auth-link">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
+              }
+              label={
+                <Typography variant="body2" color="text.secondary">
+                  I agree to the{' '}
+                  <Link
+                    to="/terms"
+                    style={{
+                      color: 'var(--primary-color)',
+                      textDecoration: 'none',
+                      fontWeight: 600
+                    }}
+                  >
+                    Terms and Conditions
+                  </Link>{' '}
+                  and{' '}
+                  <Link
+                    to="/privacy"
+                    style={{
+                      color: 'var(--primary-color)',
+                      textDecoration: 'none',
+                      fontWeight: 600
+                    }}
+                  >
+                    Privacy Policy
+                  </Link>
+                </Typography>
+              }
+              sx={{ mt: 1 }}
+            />
 
             {/* Error Message */}
             {state.error && (
-              <div className="form-error-message">
+              <Alert severity="error" sx={{ mt: 1 }}>
                 {state.error}
-              </div>
+              </Alert>
             )}
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
-              className="auth-button primary"
+              fullWidth
+              variant="contained"
               disabled={state.isLoading}
+              sx={{
+                mt: 2,
+                py: 1.5,
+                fontSize: '1rem',
+                fontWeight: 600,
+                textTransform: 'none'
+              }}
             >
               {state.isLoading ? (
-                <span className="loading-text">Creating account...</span>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={16} color="inherit" />
+                  Creating account...
+                </Box>
               ) : (
                 'Create Account'
               )}
-            </button>
+            </Button>
 
             {/* Divider */}
-            <div className="auth-divider">
-              <span>or</span>
-            </div>
+            <Divider sx={{ my: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                or
+              </Typography>
+            </Divider>
 
             {/* Login Link */}
-            <div className="auth-footer">
-              <p>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
                 Already have an account?{' '}
                 <Link
                   to="/login"
-                  className="auth-link"
+                  style={{
+                    color: 'var(--primary-color)',
+                    textDecoration: 'none',
+                    fontWeight: 600
+                  }}
                   state={{ from: location.state?.from }}
                 >
                   Sign in
                 </Link>
-              </p>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+              </Typography>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 
