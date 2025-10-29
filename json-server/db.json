@@ -17,20 +17,15 @@
   ],
   "users": [
     {
-      "id": 1,
       "firstName": "John",
       "lastName": "Doe",
       "email": "john@example.com",
-      "password": "SecurePass123!",
-      "role": "developer",
+      "language": "en",
+      "timezone": "UTC",
+      "profilePicture": "/uploads/profilePicture-1761581395525-968851510.jpg",
       "createdAt": "2025-01-15T08:30:00Z",
-      "isActive": true,
-      "lastLogin": "2025-10-26T06:39:29.744Z",
-      "claims": [
-        "read",
-        "users.view",
-        "portfolio.view"
-      ]
+      "lastLogin": "2025-10-27T16:08:12.937Z",
+      "id": 1
     },
     {
       "id": 2,
@@ -93,23 +88,23 @@
       ]
     },
     {
+      "id": 6,
       "firstName": "Kousi",
       "lastName": "Moni",
       "email": "kousi@testmail.com",
       "password": "Kousi@123",
-      "role": "designer",
+      "role": "analyst",
+      "language": "en",
+      "timezone": "UTC",
+      "profilePicture": "/uploads/profilePicture-1761570126116-767364093.png",
+      "createdAt": "2025-01-08T11:45:00Z",
       "isActive": true,
+      "lastLogin": "2025-10-29T19:23:18.983Z",
       "claims": [
-        "admin",
         "read",
-        "admin.write",
-        "admin.read",
-        "admin.access",
-        "portfolio.view"
-      ],
-      "createdAt": "2025-10-25T18:25:16.627Z",
-      "lastLogin": "2025-10-27T11:46:16.670Z",
-      "id": 6
+        "users.view",
+        "claims.view"
+      ]
     }
   ],
   "products": [

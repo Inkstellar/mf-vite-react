@@ -1,11 +1,17 @@
 // Shared types for Settings components
 export interface GeneralSettings {
+  id?: number;
   firstName: string;
   lastName: string;
   email: string;
+  role?: string;
   language: string;
   timezone: string;
-  profilePicture: string;
+  profilePicture?: string;
+  createdAt?: string;
+  isActive?: boolean;
+  lastLogin?: string;
+  claims?: string[];
 }
 
 export interface AppearanceSettings {

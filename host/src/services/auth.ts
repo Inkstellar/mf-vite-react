@@ -1,12 +1,15 @@
 // Types
 export interface User {
-  id: number;
+  id?: number;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
-  isActive: boolean;
-  createdAt: string;
+  role?: string;
+  language: string;
+  timezone: string;
+  profilePicture?: string;
+  createdAt?: string;
+  isActive?: boolean;
   lastLogin?: string;
   claims?: string[];
 }
@@ -211,9 +214,12 @@ class AuthService {
         lastName: payload.lastName,
         email: payload.email,
         role: payload.role,
+        language: payload.language || 'en',
+        timezone: payload.timezone || 'UTC',
+        profilePicture: payload.profilePicture || '',
+        createdAt: payload.createdAt || '',
         isActive: payload.isActive,
-        createdAt: '',
-        lastLogin: '',
+        lastLogin: payload.lastLogin || '',
         claims: payload.claims || []
       };
     } catch {

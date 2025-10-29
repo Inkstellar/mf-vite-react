@@ -69,6 +69,7 @@ interface AuthContextType {
   forgotPassword: (data: ForgotPasswordData) => Promise<void>;
   resetPassword: (data: ResetPasswordData) => Promise<void>;
   activateAccount: (token: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -89,23 +90,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (token && authService.isTokenValid()) {
         try {
-          // Verify token with server
+          // First try to get user data from token directly (for localStorage tokens)
+          const userFromToken = authService.getUserFromToken();
+          if (userFromToken) {
+            authService.setUser(userFromToken);
+            dispatch({ type: 'AUTH_SUCCESS', payload: { user: userFromToken, token } });
+            return;
+          }
+
+          // If token parsing fails, try server verification as fallback
           const response = await authService.verifyToken();
 
           if (response.valid && response.user) {
-            // Update user data from token
-            const userFromToken = authService.getUserFromToken();
-            if (userFromToken) {
-              authService.setUser(userFromToken);
-              dispatch({ type: 'AUTH_SUCCESS', payload: { user: userFromToken, token } });
-            }
+            authService.setUser(response.user);
+            dispatch({ type: 'AUTH_SUCCESS', payload: { user: response.user, token } });
           } else {
             // Token is invalid, logout
             authService.logout();
           }
         } catch (error) {
-          // Token verification failed, logout
-          authService.logout();
+          // If server verification fails, try to use token data directly
+          const userFromToken = authService.getUserFromToken();
+          if (userFromToken) {
+            authService.setUser(userFromToken);
+            dispatch({ type: 'AUTH_SUCCESS', payload: { user: userFromToken, token } });
+          } else {
+            // Both token parsing and server verification failed, logout
+            authService.logout();
+          }
         }
       } else if (token) {
         // Token exists but is invalid, logout
@@ -115,6 +127,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initAuth();
   }, []);
+
+  // Add a method to refresh user data
+  const refreshUser = async (): Promise<void> => {
+    const token = authService.getToken();
+    if (token && authService.isTokenValid()) {
+      try {
+        const response = await authService.verifyToken();
+        if (response.valid && response.user) {
+          const userFromToken = authService.getUserFromToken();
+          if (userFromToken) {
+            authService.setUser(userFromToken);
+            dispatch({ type: 'AUTH_SUCCESS', payload: { user: userFromToken, token } });
+          }
+        }
+      } catch (error) {
+        console.error('Error refreshing user data:', error);
+      }
+    }
+  };
 
   // Auth methods
   const login = async (credentials: LoginCredentials): Promise<void> => {
@@ -200,6 +231,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     forgotPassword,
     resetPassword,
     activateAccount,
+    refreshUser,
     clearError,
   };
 

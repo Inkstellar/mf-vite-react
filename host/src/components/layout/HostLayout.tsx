@@ -17,6 +17,7 @@ import ForgetPassword from '../../auth/ForgetPassword';
 import ErrorBoundary from '../ErrorBoundary';
 import Users from '../../pages/Users';
 import Settings from '../../pages/Settings';
+import Curriculum from '../../pages/Curriculum';
 
 
 
@@ -55,6 +56,7 @@ const HostLayout: React.FC = () => {
             <Route path="/about" element={<About />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/claims" element={<Claims />} />
+            <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/settings" element={
                <ProtectedRoute requireAuth={true}>
                 <Settings />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -9,6 +9,8 @@ import {
   Alert,
   Snackbar
 } from '@mui/material';
+import { useAuth } from '../auth/AuthContext';
+import { authService } from '../services/auth';
 import {
   Person as PersonIcon,
   Palette as PaletteIcon,
@@ -60,18 +62,47 @@ function a11yProps(index: number) {
 }
 
 const Settings: React.FC = () => {
+  const { state, refreshUser } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
-  // Form states
+  // Form states - initialize with auth user data
   const [generalSettings, setGeneralSettings] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    language: 'en',
-    timezone: 'UTC',
-    profilePicture: ''
+    id: state.user?.id,
+    firstName: state.user?.firstName || '',
+    lastName: state.user?.lastName || '',
+    email: state.user?.email || '',
+    role: state.user?.role || '',
+    language: state.user?.language || 'en',
+    timezone: state.user?.timezone || 'UTC',
+    profilePicture: state.user?.profilePicture || '',
+    createdAt: state.user?.createdAt || '',
+    isActive: state.user?.isActive ?? true,
+    lastLogin: state.user?.lastLogin || '',
+    claims: state.user?.claims || []
   });
+
+  // Update generalSettings when user data changes
+  useEffect(() => {
+    if (state.user) {
+      console.log('Settings - User updated:', state.user);
+      setGeneralSettings(prev => ({
+        ...prev,
+        id: state.user?.id || prev.id,
+        firstName: state.user?.firstName || prev.firstName,
+        lastName: state.user?.lastName || prev.lastName,
+        email: state.user?.email || prev.email,
+        role: state.user?.role || prev.role,
+        language: state.user?.language || prev.language,
+        timezone: state.user?.timezone || prev.timezone,
+        profilePicture: state.user?.profilePicture || prev.profilePicture,
+        createdAt: state.user?.createdAt || prev.createdAt,
+        isActive: state.user?.isActive ?? prev.isActive,
+        lastLogin: state.user?.lastLogin || prev.lastLogin,
+        claims: state.user?.claims || prev.claims
+      }));
+    }
+  }, [state.user]);
 
   const [appearanceSettings, setAppearanceSettings] = useState({
     theme: 'light',
@@ -99,13 +130,67 @@ const Settings: React.FC = () => {
     setTabValue(newValue);
   };
 
-  const handleSaveSettings = (section: string) => {
-    // Simulate API call
-    setSnackbar({
-      open: true,
-      message: `${section} settings saved successfully!`,
-      severity: 'success'
-    });
+  const handleSaveSettings = async (section: string) => {
+    try {
+      if (section === 'General' && state.user && state.user.id) {
+        // Update user profile via API
+        const token = authService.getToken();
+        const response = await fetch(`http://localhost:3001/users/${state.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        body: JSON.stringify({
+          ...generalSettings,
+          id: state.user.id,
+          createdAt: state.user.createdAt,
+          lastLogin: state.user.lastLogin
+        }),
+        });
+
+        if (response.ok) {
+          // Update local auth state
+          const updatedUser = {
+            ...state.user,
+            ...generalSettings,
+            id: state.user.id
+          } as typeof state.user;
+          authService.setUser(updatedUser);
+
+          // Refresh the auth context to ensure all components get the latest user data
+          await refreshUser();
+
+          // Force a re-render by updating the generalSettings state
+          setGeneralSettings(prev => ({
+            ...prev,
+            profilePicture: generalSettings.profilePicture
+          }));
+
+          setSnackbar({
+            open: true,
+            message: 'Profile updated successfully!',
+            severity: 'success'
+          });
+        } else {
+          throw new Error(`Failed to update profile: ${response.status} ${response.statusText}`);
+        }
+      } else {
+        // For other sections, just show success message
+        setSnackbar({
+          open: true,
+          message: `${section} settings saved successfully!`,
+          severity: 'success'
+        });
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setSnackbar({
+        open: true,
+        message: error instanceof Error ? error.message : `Error saving ${section} settings`,
+        severity: 'error'
+      });
+    }
   };
 
   const handleCloseSnackbar = () => {

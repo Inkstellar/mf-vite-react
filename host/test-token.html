@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test JWT Token</title>
+</head>
+<body>
+    <h1>Test JWT Token for Profile Picture</h1>
+    <button onclick="setTestToken()">Set Test Token</button>
+    <button onclick="checkToken()">Check Current Token</button>
+    <button onclick="clearToken()">Clear Token</button>
+    <div id="output"></div>
+
+    <script>
+        // Same JWT token from our test
+        const testToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImVtYWlsIjoia291c2lAdGVzdG1haWwuY29tIiwiZmlyc3ROYW1lIjoiS291c2kiLCJsYXN0TmFtZSI6Ik1vbmkiLCJyb2xlIjoiZGVzaWduZXIiLCJjbGFpbXMiOlsiYWRtaW4iLCJhZG1pbi5hY2Nlc3MiLCJhZG1pbi53cml0ZSJdLCJpc0FjdGl2ZSI6dHJ1ZSwicHJvZmlsZVBpY3R1cmUiOiIvdXBsb2Fkcy9wcm9maWxlUGljdHVyZS0xNzYxNTcwMTI2MTE2LTc2NzM2NDA5My5wbmciLCJpYXQiOjE3NjE1Nzc0MDEsImV4cCI6MTc2MTY2MzgwMX0._jjdgR6yAjVFdmM335TAGEwKnaGubANwn2g_KBm_lg0';
+
+        function setTestToken() {
+            localStorage.setItem('auth_token', testToken);
+            localStorage.setItem('auth_user', JSON.stringify({
+                id: 6,
+                firstName: "Kousi",
+                lastName: "Moni",
+                email: "kousi@testmail.com",
+                role: "designer",
+                isActive: true,
+                createdAt: "",
+                lastLogin: "",
+                claims: ["admin", "admin.access", "admin.write"],
+                profilePicture: "/uploads/profilePicture-1761570126116-767364093.png"
+            }));
+            output('Test token and user data set in localStorage');
+        }
+
+        function checkToken() {
+            const token = localStorage.getItem('auth_token');
+            const user = localStorage.getItem('auth_user');
+
+            if (token) {
+                try {
+                    // Decode JWT token (basic decode, not verify)
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    output('Current token payload: ' + JSON.stringify(payload, null, 2));
+                } catch (e) {
+                    output('Error decoding token: ' + e.message);
+                }
+            } else {
+                output('No token found in localStorage');
+            }
+
+            if (user) {
+                output('Current user data: ' + user);
+            } else {
+                output('No user data found in localStorage');
+            }
+        }
+
+        function clearToken() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            output('Token and user data cleared');
+        }
+
+        function output(text) {
+            document.getElementById('output').innerHTML += '<pre>' + text + '</pre><br>';
+        }
+
+        // Check current state on load
+        checkToken();
+    </script>
+</body>
+</html>

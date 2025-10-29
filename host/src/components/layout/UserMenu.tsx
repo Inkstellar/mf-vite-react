@@ -43,8 +43,8 @@ const UserMenu: React.FC = () => {
           <div className="user-name">
             {state.user.firstName} {state.user.lastName}
           </div>
-          <div className="user-role" style={{ color: getRoleColor(state.user.role) }}>
-            {state.user.role}
+          <div className="user-role" style={{ color: getRoleColor(state.user.role || 'user') }}>
+            {state.user.role || 'User'}
           </div>
         </div>
         <div className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>

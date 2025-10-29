@@ -167,6 +167,8 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
 
   // Get role color
   const getRoleColor = (role: string) => {
+    if (!role) return 'default';
+    
     switch (role.toLowerCase()) {
       case 'developer':
         return 'primary';
@@ -319,23 +321,40 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
 
     setUploading(true);
     try {
-      // For demo purposes, we'll simulate an upload and generate a data URL
-      // In a real application, you would upload to a server and get back a URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        setFormData(prev => ({ ...prev, profilePicture: dataUrl }));
-        setPreviewUrl('');
-        setSelectedFile(null);
-        setUploading(false);
-        setSnackbar({ open: true, message: 'Profile picture uploaded successfully', severity: 'success' });
-      };
-      reader.readAsDataURL(selectedFile);
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('profilePicture', selectedFile);
+
+      // Upload file to server
+      const response = await fetch('http://localhost:3001/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      
+      // Update form data with the file path
+      setFormData(prev => ({ ...prev, profilePicture: result.filePath }));
+      setPreviewUrl('');
+      setSelectedFile(null);
+      setUploading(false);
+      setSnackbar({ open: true, message: 'Profile picture uploaded successfully', severity: 'success' });
     } catch (error) {
       console.error('Error uploading file:', error);
       setUploading(false);
       setSnackbar({ open: true, message: 'Error uploading profile picture', severity: 'error' });
     }
+  };
+
+  // Helper function to get full image URL
+  const getFullImageUrl = (imageUrl?: string) => {
+    if (!imageUrl) return '';
+    if (imageUrl.startsWith('http')) return imageUrl;
+    return `http://localhost:3001${imageUrl}`;
   };
 
   // Handle remove preview
@@ -381,17 +400,17 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
       renderCell: (params: GridRenderCellParams<any>) => (
         <Box display="flex" alignItems="center" gap={2}>
           <Avatar
-            src={params.row.profilePicture}
+            src={getFullImageUrl(params?.row?.profilePicture)}
             sx={{
-              bgcolor: params.row.profilePicture ? 'transparent' : 'primary.main',
+              bgcolor: params?.row?.profilePicture ? 'transparent' : 'primary.main',
               width: 32,
               height: 32
             }}
           >
-            {!params.row.profilePicture && getInitials(params.row.firstName, params.row.lastName)}
+            {!params?.row?.profilePicture && params?.row?.firstName && params?.row?.lastName && getInitials(params.row.firstName, params.row.lastName)}
           </Avatar>
           <Typography variant="body2" fontWeight="medium">
-            {params.value}
+            {params?.value}
           </Typography>
         </Box>
       )
@@ -455,7 +474,7 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
       field: 'createdAt',
       headerName: 'Created',
       width: 180,
-      valueFormatter: (params: { value: any }) => formatDate(params.value as string)
+      valueFormatter: (params: { value: any }) => params?.value ? formatDate(params.value as string) : ''
     },
     {
       field: 'isActive',
@@ -474,7 +493,7 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
       field: 'lastLogin',
       headerName: 'Last Login',
       width: 180,
-      valueFormatter: (params: { value: string | undefined }) => params.value === 'Never' ? 'Never' : formatDate(params.value || '')
+      valueFormatter: (params: { value: string | undefined }) => params?.value === 'Never' ? 'Never' : params?.value ? formatDate(params.value) : 'Never'
     },
     {
       field: 'actions',
@@ -676,7 +695,7 @@ const UsersSettings: React.FC<UsersSettingsProps> = ({ onSave }) => {
                 {/* Current Profile Picture Display */}
                 <Box sx={{ textAlign: 'center' }}>
                   <Avatar
-                    src={formData.profilePicture || editingUser?.profilePicture}
+                    src={formData.profilePicture || editingUser?.profilePicture ? getFullImageUrl(formData.profilePicture || editingUser?.profilePicture) : ''}
                     sx={{
                       width: 80,
                       height: 80,

@@ -1,3 +1,4 @@
+const express = require('express');
 const jsonServer = require('json-server');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -5,9 +6,51 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const multer = require('multer');
 
-// Create JSON server
-const server = jsonServer.create();
+// Create Express app
+const app = express();
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(uploadsDir));
+
+// Create JSON server router
 const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
 
@@ -18,7 +61,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 // Custom middleware for JWT authentication
 const jwtMiddleware = (req, res, next) => {
   // Skip JWT validation for public routes (handle both /api/ and direct paths)
-  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/activate', '/api/login', '/api/register', '/api/forgot-password', '/api/reset-password', '/api/activate'];
+  const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/activate', '/api/login', '/api/register', '/api/forgot-password', '/api/reset-password', '/api/activate', '/upload'];
   const isPublicRoute = publicRoutes.some(route => req.path.includes(route));
 
   if (isPublicRoute || req.method === 'GET') {
@@ -62,7 +105,8 @@ const generateToken = (user) => {
     lastName: user.lastName,
     role: user.role,
     claims: user.claims || [],
-    isActive: user.isActive
+    isActive: user.isActive,
+    profilePicture: user.profilePicture || ''
   };
 
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -118,7 +162,8 @@ const authRoutes = (req, res, next) => {
       isActive: user.isActive,
       createdAt: user.createdAt,
       lastLogin: new Date().toISOString(),
-      claims: user.claims || []
+      claims: user.claims || [],
+      profilePicture: user.profilePicture || ''
     };
 
     return res.json({
@@ -273,7 +318,7 @@ const authRoutes = (req, res, next) => {
 };
 
 // CORS configuration
-server.use(cors({
+app.use(cors({
   origin: ['http://localhost:4173', 'http://localhost:3000', 'http://127.0.0.1:4173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -281,14 +326,34 @@ server.use(cors({
 }));
 
 // Apply middlewares
-server.use(middlewares);
-server.use(jsonServer.bodyParser);
-server.use(hashPasswordMiddleware);
-server.use(jwtMiddleware);
-server.use(authRoutes);
+app.use(middlewares);
+app.use(jsonServer.bodyParser);
+app.use(hashPasswordMiddleware);
+app.use(jwtMiddleware);
+app.use(authRoutes);
+
+// File upload endpoint (public endpoint - must be added after authRoutes but before router)
+app.post('/upload', upload.single('profilePicture'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    
+    // Return the relative path to the uploaded file
+    const filePath = `/uploads/${req.file.filename}`;
+    res.json({
+      success: true,
+      filePath: filePath,
+      fileName: req.file.filename
+    });
+  } catch (error) {
+    console.error('File upload error:', error);
+    res.status(500).json({ error: 'File upload failed' });
+  }
+});
 
 // Custom route for updating user lastLogin (for internal use)
-server.put('/users/:id/last-login', (req, res) => {
+app.put('/users/:id/last-login', (req, res) => {
   const userId = parseInt(req.params.id);
   const user = router.db.get('users').find({ id: userId }).value();
 
@@ -305,14 +370,15 @@ server.put('/users/:id/last-login', (req, res) => {
 });
 
 // Use default router for all other routes
-server.use(router);
+app.use(router);
 
 // Start server
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`🚀 Enhanced JSON Server with JWT Auth running on port ${PORT}`);
   console.log(`📝 JWT Secret: ${JWT_SECRET.substring(0, 10)}...`);
   console.log(`⏰ Token expires in: ${JWT_EXPIRES_IN}`);
+  console.log(`📁 File uploads available at: http://localhost:${PORT}/uploads`);
 });
 
-module.exports = server;
+module.exports = app;
